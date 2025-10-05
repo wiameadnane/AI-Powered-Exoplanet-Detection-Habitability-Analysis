@@ -240,7 +240,7 @@ def predict():
 def get_example():
     """Return an example from the dataset"""
     try:
-        df = pd.read_csv('cleaned_data.csv')
+        df = pd.read_csv('whole_dataset.csv')
         
         # Get a random row (excluding the target column)
         row = df.sample(n=1).iloc[0]
