@@ -4,7 +4,9 @@
 
 LifeBeyond is an advanced machine learning system that detects exoplanets from NASA TESS mission data and analyzes their potential habitability using state-of-the-art AI models.
 
-![LifeBeyond Logo](static/lifebeyond-logo.png)
+<p align="center">
+  <img src="static/lifebeyond-logo.png" alt="LifeBeyond Logo" width="300">
+</p>
 
 ## 🌟 Features
 
