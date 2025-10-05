@@ -36,9 +36,15 @@ Thumbs.db
 # Uploads folder (temporary files)
 uploads/
 
+# Generated images
+static/generated/
+
 # Exported datasets
 whole_dataset.csv
 
 # Test/debug scripts (optional)
 debug_llm.py
 test_*.py
+
+# Temporary data files
+cleaned_data.csv

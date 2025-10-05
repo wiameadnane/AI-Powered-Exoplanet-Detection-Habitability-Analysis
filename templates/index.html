@@ -69,7 +69,7 @@
             background: #ffffff;
             color: #1a1a1a;
             min-height: 100vh;
-            padding: 20px;
+            padding: 24px;
         }
 
         body.dark {
@@ -84,8 +84,8 @@
 
         header {
             text-align: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
+            padding: 24px 0 16px 0;
+            margin-bottom: 24px;
         }
 
         h1 {
@@ -104,8 +104,8 @@
         .main-content {
             display: grid;
             grid-template-columns: 1fr 400px;
-            gap: 20px;
-            margin-bottom: 30px;
+            gap: 24px;
+            margin-bottom: 40px;
         }
 
         @media (max-width: 1200px) {
@@ -116,16 +116,16 @@
 
         .card {
             background: #fafafa;
-            border-radius: 8px;
-            padding: 28px;
+            border-radius: 10px;
+            padding: 32px;
             border: 1px solid #e0e0e0;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         .card h2 {
-            margin-bottom: 24px;
+            margin-bottom: 28px;
             color: #1a1a1a;
-            font-size: 1.1em;
+            font-size: 1.15em;
             font-weight: 600;
         }
 
@@ -136,14 +136,14 @@
 
         .feature-group {
             background: #fafafa;
-            padding: 15px;
+            padding: 18px;
             border-radius: 8px;
-            border-left: 3px solid #6366f1;
+            border-left: 3px solid #2563eb;
         }
 
         .feature-group h3 {
             color: #1a1a1a;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             font-size: 0.95em;
             font-weight: 600;
         }
@@ -151,7 +151,7 @@
         .feature-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
+            gap: 16px;
         }
 
         .input-group {
@@ -541,8 +541,8 @@
 <body>
     <div class="container">
         <header>
-            <h1>🌌 Exoplanet Detection System</h1>
-            <p class="subtitle">Powered by XGBoost Machine Learning | NASA TESS Mission</p>
+            <img src="{{ url_for('static', filename='lifebeyond-logo.png') }}" alt="LifeBeyond" style="max-width: 280px; height: auto; display: block; margin: 0 auto;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <h1 style="font-size: 2em; color: #1a1a1a; font-weight: 600; margin: 0; display: none;">LifeBeyond</h1>
         </header>
 
         <div class="main-content">
