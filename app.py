@@ -13,30 +13,58 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 from db import DatabaseManager
+from model_training import train_model
+from image_gen import generate_exoplanet_image
 
 # Load environment variables
 load_dotenv()
+
+# Initialize Flask app
+app = Flask(__name__, static_folder='static')
+CORS(app)  # Enable CORS for all routes
+
+# Create static folder for generated images
+os.makedirs('static/generated', exist_ok=True)
 
 # File upload configuration
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'csv'}
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 # Initialize OpenAI client for habitability analysis
 try:
+    print("🔄 Initializing LLM client...")
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    print(f"📝 API Key found: {'Yes' if api_key else 'No'}")
+    
+    if not api_key:
+        raise ValueError("OPENROUTER_API_KEY not found in environment variables")
+    
+    print("🔄 Creating OpenAI client...")    
     openai_client = OpenAI(
         base_url="https://openrouter.ai/api/v1",
-        api_key=os.getenv("OPENROUTER_API_KEY"),
+        api_key=api_key
     )
+    
+    print("🔄 Testing API connection...")
+    try:
+        test_completion = openai_client.chat.completions.create(
+            model="openai/gpt-5-chat",  # Using GPT-5
+            messages=[{"role": "user", "content": "test"}]
+        )
+        print(f"🔍 API Response: {test_completion}")
+    except Exception as api_error:
+        print(f"⚠️  API Test Error Details: {str(api_error)}")
+        raise
+    
     llm_enabled = True
-    print("✅ OpenAI client initialized for habitability analysis")
+    print("✅ OpenAI client initialized and tested successfully")
+    print(f"✅ Test response received: {test_completion.model}")
 except Exception as e:
-    print(f"⚠️  LLM not available: {e}")
+    print(f"⚠️  LLM initialization failed with error: {str(e)}")
+    print(f"⚠️  Error type: {type(e).__name__}")
     openai_client = None
     llm_enabled = False
 
@@ -178,13 +206,30 @@ def predict():
             'label': 'Exoplanet Detected! 🌟' if prediction == 1 else 'Not an Exoplanet ❌'
         }
         
-        # If it's an exoplanet and LLM is enabled, analyze habitability
-        if prediction == 1 and llm_enabled:
+        # If it's an exoplanet, analyze habitability and generate visualization
+        if prediction == 1:
             print("🌍 Analyzing habitability...")
-            habitability_result = analyze_habitability(data)
-            result['habitability'] = habitability_result
+            if llm_enabled and openai_client is not None:
+                habitability_result = analyze_habitability(data)
+                result['habitability'] = habitability_result
+            else:
+                print("⚠️ LLM not enabled or client not available")
+                result['habitability'] = {
+                    'error': 'LLM not available',
+                    'habitability_score': None,
+                    'explanation': 'Habitability analysis requires OpenAI API key',
+                    'success': False
+                }
+            
+            # Generate visualization regardless of LLM status
+            print("🎨 Generating exoplanet visualization...")
+            visualization_result = generate_exoplanet_image(data)
+            result['visualization'] = visualization_result
         else:
             result['habitability'] = None
+            result['visualization'] = None
+            
+        print(f"Prediction result: {result}")
         
         return jsonify(result)
     
@@ -250,44 +295,46 @@ def analyze_habitability(exoplanet_data):
         st_rad = exoplanet_data.get('st_rad', 'N/A')
         st_logg = exoplanet_data.get('st_logg', 'N/A')
         
-        prompt = f"""You are an exoplanet habitability expert. Analyze the following exoplanet and compare it to Earth.
+        prompt = f"""You are an exoplanet scientist analyzing Earth similarity. Compare this exoplanet to Earth.
 
-EARTH REFERENCE VALUES:
-- Orbital Period: 365.256 days
-- Planet Radius: 1.0 R_earth
-- Insolation Flux: 1.0 Earth flux
-- Equilibrium Temperature: 255 K
-- Stellar Effective Temperature: 5772 K
-- Stellar Radius: 1.0 R_sun
-- Stellar Surface Gravity: 4.44 dex
+EARTH REFERENCE:
+• Orbital Period: 365.256 days
+• Planet Radius: 1.0 R⊕
+• Insolation Flux: 1.0 Earth flux
+• Equilibrium Temperature: 255 K
+• Star Temperature: 5772 K
 
 EXOPLANET DATA:
-- Orbital Period: {pl_orbper} days
-- Planet Radius: {pl_rade} R_earth
-- Insolation Flux: {pl_insol} Earth flux
-- Equilibrium Temperature: {pl_eqt} K
-- Stellar Effective Temperature: {st_teff} K
-- Stellar Radius: {st_rad} R_sun
-- Stellar Surface Gravity: {st_logg} dex
+• Orbital Period: {pl_orbper} days
+• Planet Radius: {pl_rade} R⊕
+• Insolation Flux: {pl_insol} Earth flux
+• Equilibrium Temperature: {pl_eqt} K
+• Star Temperature: {st_teff} K
 
-REQUIRED OUTPUT FORMAT:
-Start your response with: "HABITABILITY SCORE: X%" where X is a number between 0-100.
-Then provide a brief explanation (2-3 sentences) about why you gave this score, considering:
-- Temperature compatibility with liquid water
-- Planet size and potential for being rocky
-- Radiation levels from the star
-- Orbital characteristics
+REQUIRED FORMAT:
+Start with: "HABITABILITY SCORE: X%"
 
-Be realistic - most exoplanets are NOT habitable. Only planets very similar to Earth should score above 60%."""
+Then write 2-3 clear sentences explaining:
+- Temperature and liquid water potential
+- Planet size and composition
+- Radiation environment
+- Overall habitability assessment
 
-        completion = openai_client.chat.completions.create(
-            model="openai/gpt-4o-mini",  # Using a more reliable model
-            messages=[
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=500
-        )
+Use asterisks (*) for emphasis on key points. Be realistic - most exoplanets score below 30%."""
+
+        print("🔄 Starting habitability analysis...")
+        try:
+            completion = openai_client.chat.completions.create(
+                model="openai/gpt-5-chat",  # Using GPT-5 for analysis
+                messages=[
+                    {"role": "user", "content": prompt}
+                ]
+            )
+            print("✅ Received habitability analysis response")
+            print(f"🔍 Model used: {completion.model}")
+        except Exception as analysis_error:
+            print(f"⚠️  Habitability Analysis Error: {str(analysis_error)}")
+            raise
         
         response_text = completion.choices[0].message.content
         
@@ -482,6 +529,68 @@ def database_status():
     except Exception as e:
         return jsonify({
             'connected': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/api/retrain', methods=['POST'])
+def retrain_model():
+    """
+    Retrain the model using all data in the database
+    Returns new model performance metrics
+    """
+    try:
+        # Get data from database
+        db = DatabaseManager(table_name='tess_dataset')
+        result = db.export_to_csv('temp_training_data.csv')
+        
+        if not result.get('success'):
+            return jsonify({
+                'success': False,
+                'error': f"Database export error: {result.get('error')}"
+            }), 500
+        
+        # Load the data
+        try:
+            df = pd.read_csv('temp_training_data.csv')
+            os.remove('temp_training_data.csv')  # Clean up temp file
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': f"Error loading data: {str(e)}"
+            }), 500
+        
+        # Check if we have enough data
+        if len(df) < 100:  # Minimum threshold for training
+            return jsonify({
+                'success': False,
+                'error': "Not enough data for training. Minimum 100 samples required."
+            }), 400
+        
+        # Train model
+        try:
+            results = train_model(df)
+            
+            # Reload the model and scaler
+            global model, scaler, feature_names
+            model = joblib.load('models/xgb_model.pkl')
+            scaler = joblib.load('models/scaler.pkl')
+            feature_names = joblib.load('models/feature_names.pkl')
+            
+            return jsonify({
+                'success': True,
+                'message': 'Model retrained successfully',
+                'metrics': results
+            })
+            
+        except Exception as e:
+            return jsonify({
+                'success': False,
+                'error': f"Error during training: {str(e)}"
+            }), 500
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
             'error': str(e)
         }), 500
 

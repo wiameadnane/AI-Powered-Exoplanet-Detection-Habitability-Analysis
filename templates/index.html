@@ -5,6 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Exoplanet Detection System | NASA TESS</title>
     <style>
+        :root {
+            --radius: 0.65rem;
+            --background: oklch(1 0 0);
+            --foreground: oklch(0.141 0.005 285.823);
+            --card: oklch(1 0 0);
+            --card-foreground: oklch(0.141 0.005 285.823);
+            --popover: oklch(1 0 0);
+            --popover-foreground: oklch(0.141 0.005 285.823);
+            --primary: oklch(0.623 0.214 259.815);
+            --primary-foreground: oklch(0.97 0.014 254.604);
+            --secondary: oklch(0.967 0.001 286.375);
+            --secondary-foreground: oklch(0.21 0.006 285.885);
+            --muted: oklch(0.967 0.001 286.375);
+            --muted-foreground: oklch(0.552 0.016 285.938);
+            --accent: oklch(0.967 0.001 286.375);
+            --accent-foreground: oklch(0.21 0.006 285.885);
+            --destructive: oklch(0.577 0.245 27.325);
+            --border: oklch(0.92 0.004 286.32);
+            --input: oklch(0.92 0.004 286.32);
+            --ring: oklch(0.623 0.214 259.815);
+            --chart-1: oklch(0.646 0.222 41.116);
+            --chart-2: oklch(0.6 0.118 184.704);
+            --chart-3: oklch(0.398 0.07 227.392);
+            --chart-4: oklch(0.828 0.189 84.429);
+            --chart-5: oklch(0.769 0.188 70.08);
+        }
+
+        .dark {
+            --background: oklch(0.141 0.005 285.823);
+            --foreground: oklch(0.985 0 0);
+            --card: oklch(0.21 0.006 285.885);
+            --card-foreground: oklch(0.985 0 0);
+            --popover: oklch(0.21 0.006 285.885);
+            --popover-foreground: oklch(0.985 0 0);
+            --primary: oklch(0.546 0.245 262.881);
+            --primary-foreground: oklch(0.379 0.146 265.522);
+            --secondary: oklch(0.274 0.006 286.033);
+            --secondary-foreground: oklch(0.985 0 0);
+            --muted: oklch(0.274 0.006 286.033);
+            --muted-foreground: oklch(0.705 0.015 286.067);
+            --accent: oklch(0.274 0.006 286.033);
+            --accent-foreground: oklch(0.985 0 0);
+            --destructive: oklch(0.704 0.191 22.216);
+            --border: oklch(1 0 0 / 10%);
+            --input: oklch(1 0 0 / 15%);
+            --ring: oklch(0.488 0.243 264.376);
+            --chart-1: oklch(0.488 0.243 264.376);
+            --chart-2: oklch(0.696 0.17 162.48);
+            --chart-3: oklch(0.769 0.188 70.08);
+            --chart-4: oklch(0.627 0.265 303.9);
+            --chart-5: oklch(0.645 0.246 16.439);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -12,11 +65,16 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4d 50%, #2d1b3d 100%);
-            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: #f5f5f5;
+            color: #1a1a1a;
             min-height: 100vh;
             padding: 20px;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, var(--background) 0%, var(--card) 50%, var(--secondary) 100%);
+            color: var(--foreground);
         }
 
         .container {
@@ -27,25 +85,24 @@
         header {
             text-align: center;
             padding: 30px 0;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
+            background: white;
+            border-radius: 12px;
             margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         h1 {
             font-size: 2.5em;
-            background: linear-gradient(90deg, #4fc3f7, #ba68c8, #f06292);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: #1a1a1a;
             margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
-            color: #b0b0b0;
-            font-size: 1.1em;
+            color: #6b7280;
+            font-size: 1.05em;
         }
 
         .main-content {
@@ -62,18 +119,18 @@
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
+            background: white;
+            border-radius: 12px;
             padding: 25px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid #e5e5e5;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
 
         .card h2 {
             margin-bottom: 20px;
-            color: #4fc3f7;
-            font-size: 1.5em;
+            color: #1a1a1a;
+            font-size: 1.4em;
+            font-weight: 600;
         }
 
         .feature-groups {
@@ -82,14 +139,14 @@
         }
 
         .feature-group {
-            background: rgba(0, 0, 0, 0.2);
+            background: #fafafa;
             padding: 15px;
-            border-radius: 10px;
-            border-left: 3px solid #4fc3f7;
+            border-radius: 8px;
+            border-left: 3px solid #6366f1;
         }
 
         .feature-group h3 {
-            color: #ba68c8;
+            color: var(--primary);
             margin-bottom: 15px;
             font-size: 1.1em;
         }
@@ -107,25 +164,25 @@
 
         .input-group label {
             font-size: 0.85em;
-            color: #b0b0b0;
+            color: var(--muted-foreground);
             margin-bottom: 5px;
         }
 
         .input-group input {
-            padding: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 12px;
+            border: 1px solid #e5e5e5;
             border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            color: #ffffff;
+            background: white;
+            color: #1a1a1a;
             font-size: 0.95em;
-            transition: all 0.3s;
+            transition: all 0.2s;
         }
 
         .input-group input:focus {
             outline: none;
-            border-color: #4fc3f7;
-            background: rgba(255, 255, 255, 0.08);
-            box-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
         }
 
         .button-group {
@@ -136,45 +193,46 @@
 
         button {
             flex: 1;
-            padding: 15px 30px;
+            padding: 12px 24px;
             border: none;
-            border-radius: 10px;
-            font-size: 1em;
-            font-weight: bold;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.2s;
         }
 
         .btn-predict {
-            background: linear-gradient(135deg, #4fc3f7 0%, #ba68c8 100%);
+            background: #6366f1;
             color: white;
         }
 
         .btn-predict:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(79, 195, 247, 0.4);
+            background: #5558e3;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
         }
 
         .btn-example {
-            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            background: #10b981;
             color: white;
         }
 
         .btn-example:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 187, 106, 0.4);
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
 
         .btn-reset {
-            background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+            background: #ef4444;
             color: white;
         }
 
         .btn-reset:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(239, 83, 80, 0.4);
+            background: #dc2626;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         button:disabled {
@@ -289,27 +347,29 @@
 
         .placeholder-text {
             text-align: center;
-            color: #666;
-            font-style: italic;
+            color: #9ca3af;
+            font-style: normal;
             padding: 60px 20px;
+            font-size: 0.95em;
         }
 
         .info-box {
-            background: rgba(79, 195, 247, 0.1);
-            border-left: 3px solid #4fc3f7;
+            background: var(--accent);
+            border-left: 3px solid var(--primary);
             padding: 15px;
-            border-radius: 5px;
+            border-radius: var(--radius);
             margin-bottom: 20px;
         }
 
         .info-box p {
             font-size: 0.9em;
             line-height: 1.6;
+            color: var(--accent-foreground);
         }
 
         .features-loaded {
             text-align: center;
-            color: #66bb6a;
+            color: var(--chart-2);
             margin-bottom: 20px;
             font-weight: bold;
         }
@@ -380,21 +440,22 @@
         }
 
         .stat-box {
-            background: rgba(0, 0, 0, 0.3);
+            background: #fafafa;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: center;
+            border: 1px solid #e5e5e5;
         }
 
         .stat-value {
             font-size: 2em;
             font-weight: bold;
-            color: #4fc3f7;
+            color: var(--primary);
             margin-bottom: 10px;
         }
 
         .stat-label {
-            color: #b0b0b0;
+            color: var(--muted-foreground);
             font-size: 0.9em;
         }
 
@@ -427,10 +488,10 @@
             flex: 1;
             min-width: 200px;
             padding: 15px 30px;
-            border: 2px solid #4fc3f7;
-            border-radius: 10px;
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
             background: transparent;
-            color: #4fc3f7;
+            color: var(--primary);
             font-size: 1em;
             font-weight: bold;
             cursor: pointer;
@@ -438,7 +499,7 @@
         }
 
         .btn-secondary:hover {
-            background: rgba(79, 195, 247, 0.1);
+            background: var(--accent);
             transform: translateY(-2px);
         }
 
@@ -521,11 +582,11 @@
                             </div>
                         </div>
 
-                        <!-- Habitability Analysis Section -->
+                        <!-- Earth Similarity Section -->
                         <div id="habitabilitySection" style="display: none;">
-                            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
-                                <h3 style="color: #66bb6a; text-align: center; margin-bottom: 20px;">
-                                    🌍 Habitability Analysis
+                            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e5e5;">
+                                <h3 style="color: #10b981; text-align: center; margin-bottom: 20px; font-weight: 600;">
+                                    🌍 Earth Similarity
                                 </h3>
                                 
                                 <div id="habitabilityLoading" class="loading" style="padding: 20px;">
@@ -536,18 +597,35 @@
                                 <div id="habitabilityContent" style="display: none;">
                                     <div style="text-align: center; margin-bottom: 20px;">
                                         <div style="font-size: 3em; margin-bottom: 10px;" id="habitabilityIcon">🌱</div>
-                                        <div style="font-size: 2em; font-weight: bold; color: #66bb6a;" id="habitabilityScore">0%</div>
-                                        <div style="font-size: 0.9em; color: #b0b0b0;">Earth Similarity</div>
+                                        <div style="font-size: 2em; font-weight: bold; color: #10b981;" id="habitabilityScore">0%</div>
+                                        <div style="font-size: 0.9em; color: #6b7280;">Earth Similarity Score</div>
                                     </div>
                                     
-                                    <div class="confidence-bar" style="margin: 20px 0;">
-                                        <div class="confidence-fill" id="habitabilityBar" style="background: linear-gradient(90deg, #66bb6a, #43a047);">
+                                    <div class="confidence-bar" style="margin: 20px 0; background: #f3f4f6;">
+                                        <div class="confidence-fill" id="habitabilityBar" style="background: #10b981;">
                                             <span id="habitabilityBarText"></span>
                                         </div>
                                     </div>
                                     
-                                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-top: 15px;">
-                                        <p style="font-size: 0.95em; line-height: 1.6; color: #e0e0e0;" id="habitabilityExplanation"></p>
+                                    <div style="background: #fafafa; padding: 20px; border-radius: 8px; margin-top: 15px; border: 1px solid #e5e5e5;">
+                                        <p style="font-size: 0.95em; line-height: 1.8; color: #374151; white-space: pre-line;" id="habitabilityExplanation"></p>
+                                    </div>
+
+                                    <!-- Exoplanet Visualization -->
+                                    <div id="visualizationSection" style="margin-top: 30px;">
+                                        <h4 style="color: #4fc3f7; margin-bottom: 15px;">🎨 Artistic Visualization</h4>
+                                        <div style="position: relative; overflow: hidden; border-radius: 10px; background: rgba(0,0,0,0.2);">
+                                            <img id="exoplanetImage" style="width: 100%; height: auto; display: block; opacity: 0; transition: opacity 0.5s ease;" 
+                                                 alt="Generated exoplanet visualization"
+                                                 onload="this.style.opacity = 1;">
+                                            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.7); padding: 10px;">
+                                                <p style="color: #b0b0b0; font-size: 0.8em; margin: 0;" id="visualizationPrompt"></p>
+                                            </div>
+                                            <div id="imageLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                                <div class="spinner"></div>
+                                                <p style="color: #4fc3f7; margin-top: 10px;">Generating visualization...</p>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 
@@ -607,6 +685,35 @@
                 <button type="button" class="btn-secondary" id="refreshStatsBtn">
                     🔄 Refresh Stats
                 </button>
+                <button type="button" class="btn-secondary" id="retrainModelBtn">
+                    🧠 Retrain Model
+                </button>
+            </div>
+
+            <!-- Model Stats -->
+            <div id="modelStats" style="margin-top: 30px; display: none;">
+                <h3 style="color: #4fc3f7; margin-bottom: 20px;">🎯 Model Performance</h3>
+                <div class="database-stats">
+                    <div class="stat-box">
+                        <div class="stat-label">AUC Score</div>
+                        <div class="stat-value" id="modelAuc">-</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Dataset Size</div>
+                        <div class="stat-value" id="modelDatasetSize">-</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Exoplanet Ratio</div>
+                        <div class="stat-value" id="modelExoplanetRatio">-</div>
+                    </div>
+                </div>
+
+                <!-- Top Features -->
+                <div style="margin-top: 20px;">
+                    <h4 style="color: #ba68c8; margin-bottom: 15px;">Top 10 Important Features</h4>
+                    <div id="topFeatures" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -786,11 +893,49 @@
             document.getElementById('probExo').textContent = 
                 (result.probabilities.exoplanet * 100).toFixed(1) + '%';
 
-            // Handle habitability analysis
-            if (isExoplanet && result.habitability) {
-                displayHabitability(result.habitability);
+            // Handle habitability analysis and visualization
+            const habitabilitySection = document.getElementById('habitabilitySection');
+            const visualizationSection = document.getElementById('visualizationSection');
+            const imageLoading = document.getElementById('imageLoading');
+            
+            if (isExoplanet) {
+                habitabilitySection.style.display = 'block';
+                if (result.habitability) {
+                    displayHabitability(result.habitability);
+                } else {
+                    // Show error if habitability analysis is not available
+                    const error = document.getElementById('habitabilityError');
+                    const content = document.getElementById('habitabilityContent');
+                    const loading = document.getElementById('habitabilityLoading');
+                    
+                    error.style.display = 'block';
+                    content.style.display = 'none';
+                    loading.style.display = 'none';
+                    
+                    document.getElementById('habitabilityErrorText').textContent = 
+                        'Habitability analysis is not available. Please check if OpenRouter API key is configured correctly.';
+                }
+                
+                // Handle visualization
+                if (result.visualization && result.visualization.success) {
+                    visualizationSection.style.display = 'block';
+                    const img = document.getElementById('exoplanetImage');
+                    img.src = result.visualization.image_path;
+                    document.getElementById('visualizationPrompt').textContent = 
+                        'Generated based on: ' + result.visualization.prompt;
+                    imageLoading.style.display = 'block';
+                    
+                    // Hide loading when image loads
+                    img.onload = () => {
+                        imageLoading.style.display = 'none';
+                        img.style.opacity = 1;
+                    };
+                } else {
+                    visualizationSection.style.display = 'none';
+                }
             } else {
-                document.getElementById('habitabilitySection').style.display = 'none';
+                habitabilitySection.style.display = 'none';
+                visualizationSection.style.display = 'none';
             }
 
             // Show results
@@ -817,11 +962,18 @@
                 document.getElementById('habitabilityScore').textContent = score.toFixed(1) + '%';
                 
                 // Update icon based on score
-                let icon = '🌱';
-                if (score > 70) icon = '🌍';
-                else if (score > 50) icon = '🌿';
-                else if (score > 30) icon = '🪨';
-                else icon = '❄️';
+                let icon = '';
+                if (score > 80) {
+                    icon = '🌍 🌊 🌱'; // Earth-like with water and life potential
+                } else if (score > 60) {
+                    icon = '🌏 💧 ☘️'; // Good habitability potential
+                } else if (score > 40) {
+                    icon = '🪐 🌡️ 💨'; // Moderate conditions
+                } else if (score > 20) {
+                    icon = '🌑 ⭐ 🌫️'; // Challenging but interesting
+                } else {
+                    icon = '🌌 ✨ 🔭'; // Interesting for study
+                }
                 document.getElementById('habitabilityIcon').textContent = icon;
                 
                 // Update progress bar
@@ -1011,6 +1163,56 @@
             setTimeout(() => {
                 uploadStatus.style.display = 'none';
             }, 2000);
+        });
+
+        // Retrain model button
+        document.getElementById('retrainModelBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('retrainModelBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Retraining...';
+            
+            showUploadStatus('loading', 'Retraining model with all available data...');
+            
+            try {
+                const response = await fetch('/api/retrain', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    // Update model stats display
+                    document.getElementById('modelStats').style.display = 'block';
+                    document.getElementById('modelAuc').textContent = (result.metrics.auc_score * 100).toFixed(2) + '%';
+                    document.getElementById('modelDatasetSize').textContent = result.metrics.dataset_size.toLocaleString();
+                    document.getElementById('modelExoplanetRatio').textContent = (result.metrics.exoplanet_ratio * 100).toFixed(1) + '%';
+                    
+                    // Display top features
+                    const topFeaturesContainer = document.getElementById('topFeatures');
+                    topFeaturesContainer.innerHTML = '';
+                    
+                    result.metrics.top_features.forEach(feature => {
+                        const featureBox = document.createElement('div');
+                        featureBox.className = 'stat-box';
+                        featureBox.style.padding = '10px';
+                        featureBox.innerHTML = `
+                            <div class="stat-label">${feature.feature}</div>
+                            <div class="stat-value">${(feature.importance * 100).toFixed(1)}%</div>
+                        `;
+                        topFeaturesContainer.appendChild(featureBox);
+                    });
+                    
+                    showUploadStatus('success', 
+                        `✅ Model retrained successfully!\nAUC Score: ${(result.metrics.auc_score * 100).toFixed(2)}%`
+                    );
+                } else {
+                    showUploadStatus('error', `❌ Retraining failed: ${result.error}`);
+                }
+            } catch (error) {
+                showUploadStatus('error', `❌ Retraining failed: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🧠 Retrain Model';
+            }
         });
     </script>
 </body>
