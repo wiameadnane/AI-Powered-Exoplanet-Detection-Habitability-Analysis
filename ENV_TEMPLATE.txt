@@ -1,0 +1,29 @@
+# ============================================
+# Environment Variables Template
+# ============================================
+# Copy this file to .env and fill in your actual values
+# 
+# Command:
+#   Windows: copy ENV_TEMPLATE.txt .env
+#   Linux/Mac: cp ENV_TEMPLATE.txt .env
+#
+# Then edit .env with your actual values
+# ============================================
+
+# OpenRouter API Key for habitability analysis
+OPENROUTER_API_KEY=your-api-key-here
+
+# PostgreSQL Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=your_database_name
+DB_USER=your_database_user
+DB_PASSWORD=your_database_password
+
+# Example format:
+# OPENROUTER_API_KEY=sk-or-v1-xxxxxxxxxxxxxxxxxxxxx
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_NAME=tess_exoplanets
+# DB_USER=postgres
+# DB_PASSWORD=your_password_here

@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exoplanet Detection System | NASA TESS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4d 50%, #2d1b3d 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #4fc3f7, #ba68c8, #f06292);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #b0b0b0;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1200px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .card h2 {
+            margin-bottom: 20px;
+            color: #4fc3f7;
+            font-size: 1.5em;
+        }
+
+        .feature-groups {
+            display: grid;
+            gap: 20px;
+        }
+
+        .feature-group {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 3px solid #4fc3f7;
+        }
+
+        .feature-group h3 {
+            color: #ba68c8;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-group label {
+            font-size: 0.85em;
+            color: #b0b0b0;
+            margin-bottom: 5px;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            font-size: 0.95em;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #4fc3f7;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 10px rgba(79, 195, 247, 0.3);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            flex: 1;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-predict {
+            background: linear-gradient(135deg, #4fc3f7 0%, #ba68c8 100%);
+            color: white;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(79, 195, 247, 0.4);
+        }
+
+        .btn-example {
+            background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%);
+            color: white;
+        }
+
+        .btn-example:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 187, 106, 0.4);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #ef5350 0%, #e53935 100%);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(239, 83, 80, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .result-panel {
+            position: sticky;
+            top: 20px;
+        }
+
+        .result-content {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .result-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .result-label {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .result-exoplanet {
+            color: #66bb6a;
+        }
+
+        .result-not-exoplanet {
+            color: #ef5350;
+        }
+
+        .confidence-bar {
+            margin: 20px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+            height: 40px;
+            position: relative;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4fc3f7, #ba68c8);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .probability-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .probability-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .probability-label {
+            font-size: 0.9em;
+            color: #b0b0b0;
+            margin-bottom: 10px;
+        }
+
+        .probability-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #4fc3f7;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .placeholder-text {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 60px 20px;
+        }
+
+        .info-box {
+            background: rgba(79, 195, 247, 0.1);
+            border-left: 3px solid #4fc3f7;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .features-loaded {
+            text-align: center;
+            color: #66bb6a;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .upload-section {
+            margin-top: 30px;
+            padding: 30px;
+        }
+
+        .upload-box {
+            border: 2px dashed rgba(79, 195, 247, 0.5);
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-box:hover {
+            border-color: #4fc3f7;
+            background: rgba(79, 195, 247, 0.1);
+        }
+
+        .upload-box.dragover {
+            border-color: #66bb6a;
+            background: rgba(102, 187, 106, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn-upload {
+            background: linear-gradient(135deg, #f06292 0%, #ba68c8 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .btn-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(240, 98, 146, 0.4);
+        }
+
+        .btn-upload:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .database-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #4fc3f7;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #b0b0b0;
+            font-size: 0.9em;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected {
+            background-color: #66bb6a;
+            box-shadow: 0 0 10px #66bb6a;
+        }
+
+        .status-disconnected {
+            background-color: #ef5350;
+            box-shadow: 0 0 10px #ef5350;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 30px;
+            border: 2px solid #4fc3f7;
+            border-radius: 10px;
+            background: transparent;
+            color: #4fc3f7;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(79, 195, 247, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌌 Exoplanet Detection System</h1>
+            <p class="subtitle">Powered by XGBoost Machine Learning | NASA TESS Mission</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Input Form -->
+            <div class="card">
+                <h2>📊 Enter Observation Data</h2>
+                
+                <div class="info-box">
+                    <p>💡 <strong>Tip:</strong> Click "Load Example" to populate fields with real TESS data, or manually enter your observation values.</p>
+                </div>
+
+                <div class="features-loaded" id="featuresLoaded"></div>
+
+                <form id="predictionForm">
+                    <div id="featureGroups" class="feature-groups">
+                        <!-- Features will be dynamically loaded here -->
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn-predict" id="predictBtn">
+                            Detect Exoplanet
+                        </button>
+                        <button type="button" class="btn-example" id="exampleBtn">
+                            Load Example
+                        </button>
+                        <button type="button" class="btn-reset" id="resetBtn">
+                            Reset
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="card result-panel">
+                <h2>🔬 Detection Results</h2>
+                
+                <div id="placeholder" class="placeholder-text">
+                    <p>Enter observation data and click "Detect Exoplanet" to see results</p>
+                </div>
+
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Analyzing data...</p>
+                </div>
+
+                <div id="results" style="display: none;">
+                    <div class="result-content">
+                        <div class="result-icon" id="resultIcon"></div>
+                        <div class="result-label" id="resultLabel"></div>
+                        
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" id="confidenceFill">
+                                <span id="confidenceText"></span>
+                            </div>
+                        </div>
+
+                        <div class="probability-grid">
+                            <div class="probability-box">
+                                <div class="probability-label">Not Exoplanet</div>
+                                <div class="probability-value" id="probNotExo">0%</div>
+                            </div>
+                            <div class="probability-box">
+                                <div class="probability-label">Exoplanet</div>
+                                <div class="probability-value" id="probExo">0%</div>
+                            </div>
+                        </div>
+
+                        <!-- Habitability Analysis Section -->
+                        <div id="habitabilitySection" style="display: none;">
+                            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid rgba(255,255,255,0.1);">
+                                <h3 style="color: #66bb6a; text-align: center; margin-bottom: 20px;">
+                                    🌍 Habitability Analysis
+                                </h3>
+                                
+                                <div id="habitabilityLoading" class="loading" style="padding: 20px;">
+                                    <div class="spinner"></div>
+                                    <p>Analyzing habitability...</p>
+                                </div>
+                                
+                                <div id="habitabilityContent" style="display: none;">
+                                    <div style="text-align: center; margin-bottom: 20px;">
+                                        <div style="font-size: 3em; margin-bottom: 10px;" id="habitabilityIcon">🌱</div>
+                                        <div style="font-size: 2em; font-weight: bold; color: #66bb6a;" id="habitabilityScore">0%</div>
+                                        <div style="font-size: 0.9em; color: #b0b0b0;">Earth Similarity</div>
+                                    </div>
+                                    
+                                    <div class="confidence-bar" style="margin: 20px 0;">
+                                        <div class="confidence-fill" id="habitabilityBar" style="background: linear-gradient(90deg, #66bb6a, #43a047);">
+                                            <span id="habitabilityBarText"></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                                        <p style="font-size: 0.95em; line-height: 1.6; color: #e0e0e0;" id="habitabilityExplanation"></p>
+                                    </div>
+                                </div>
+                                
+                                <div id="habitabilityError" style="display: none;">
+                                    <div style="background: rgba(239, 83, 80, 0.1); border-left: 3px solid #ef5350; padding: 15px; border-radius: 5px;">
+                                        <p style="color: #ef5350; font-size: 0.9em;" id="habitabilityErrorText"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Upload Section for Researchers -->
+        <div class="card upload-section">
+            <h2>🔬 Researcher Tools: Upload Additional Data</h2>
+            
+            <div class="info-box">
+                <p>💡 <strong>For Researchers:</strong> Upload CSV files with additional TESS observations to expand the dataset and improve model retraining.</p>
+            </div>
+
+            <!-- Database Status -->
+            <div class="database-stats">
+                <div class="stat-box">
+                    <div class="stat-label">
+                        <span id="dbStatusIndicator" class="status-indicator status-disconnected"></span>
+                        Database Status
+                    </div>
+                    <div class="stat-value" id="dbStatus">Checking...</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Total Rows in Database</div>
+                    <div class="stat-value" id="dbRowCount">-</div>
+                </div>
+            </div>
+
+            <!-- Upload Box -->
+            <div class="upload-box" id="uploadBox">
+                <div class="upload-icon">📤</div>
+                <h3>Drop CSV file here or click to browse</h3>
+                <p style="color: #b0b0b0; margin-top: 10px;">Supported format: CSV files only (max 16MB)</p>
+                <input type="file" id="csvFileInput" class="file-input" accept=".csv">
+                <button type="button" class="btn-upload" id="browseBtn">Browse Files</button>
+                <div id="uploadStatus" style="margin-top: 20px; display: none;"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="btn-secondary" id="exportDatasetBtn">
+                    📊 Export Full Dataset
+                </button>
+                <button type="button" class="btn-secondary" id="downloadDatasetBtn">
+                    💾 Download whole_dataset.csv
+                </button>
+                <button type="button" class="btn-secondary" id="refreshStatsBtn">
+                    🔄 Refresh Stats
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allFeatures = [];
+
+        // Load features on page load
+        async function loadFeatures() {
+            try {
+                const response = await fetch('/api/features');
+                const data = await response.json();
+                allFeatures = data.features;
+                
+                document.getElementById('featuresLoaded').textContent = 
+                    `${allFeatures.length} features loaded`;
+                
+                renderFeatures();
+            } catch (error) {
+                console.error('Error loading features:', error);
+                alert('Failed to load features');
+            }
+        }
+
+        // Render features grouped by category
+        function renderFeatures() {
+            const container = document.getElementById('featureGroups');
+            const groups = {};
+
+            // Group features
+            allFeatures.forEach(feature => {
+                if (!groups[feature.group]) {
+                    groups[feature.group] = [];
+                }
+                groups[feature.group].push(feature);
+            });
+
+            // Render groups
+            container.innerHTML = '';
+            Object.keys(groups).forEach(groupName => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'feature-group';
+                
+                const groupTitle = document.createElement('h3');
+                groupTitle.textContent = groupName;
+                groupDiv.appendChild(groupTitle);
+
+                const grid = document.createElement('div');
+                grid.className = 'feature-grid';
+
+                groups[groupName].forEach(feature => {
+                    const inputGroup = document.createElement('div');
+                    inputGroup.className = 'input-group';
+                    
+                    const label = document.createElement('label');
+                    label.textContent = feature.label;
+                    label.setAttribute('for', feature.name);
+                    
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.step = 'any';
+                    input.id = feature.name;
+                    input.name = feature.name;
+                    input.placeholder = '0.0';
+                    input.required = true;
+                    
+                    inputGroup.appendChild(label);
+                    inputGroup.appendChild(input);
+                    grid.appendChild(inputGroup);
+                });
+
+                groupDiv.appendChild(grid);
+                container.appendChild(groupDiv);
+            });
+        }
+
+        // Load example data
+        document.getElementById('exampleBtn').addEventListener('click', async () => {
+            try {
+                const button = document.getElementById('exampleBtn');
+                button.disabled = true;
+                button.textContent = 'Loading...';
+
+                const response = await fetch('/api/example');
+                const data = await response.json();
+
+                if (data.features) {
+                    Object.keys(data.features).forEach(key => {
+                        const input = document.getElementById(key);
+                        if (input) {
+                            input.value = data.features[key];
+                        }
+                    });
+                    
+                    alert('✅ Example data loaded! This is a real observation from TESS.');
+                }
+
+                button.disabled = false;
+                button.textContent = 'Load Example';
+            } catch (error) {
+                console.error('Error loading example:', error);
+                alert('Failed to load example data');
+                document.getElementById('exampleBtn').disabled = false;
+                document.getElementById('exampleBtn').textContent = 'Load Example';
+            }
+        });
+
+        // Reset form
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            document.getElementById('predictionForm').reset();
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('placeholder').style.display = 'block';
+        });
+
+        // Handle form submission
+        document.getElementById('predictionForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {};
+            
+            formData.forEach((value, key) => {
+                data[key] = parseFloat(value);
+            });
+
+            // Show loading
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('predictBtn').disabled = true;
+
+            try {
+                const response = await fetch('/api/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    displayResults(result);
+                } else {
+                    alert('Error: ' + result.error);
+                    document.getElementById('placeholder').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to make prediction');
+                document.getElementById('placeholder').style.display = 'block';
+            } finally {
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('predictBtn').disabled = false;
+            }
+        });
+
+        // Display results
+        function displayResults(result) {
+            const isExoplanet = result.is_exoplanet;
+            const confidence = (result.confidence * 100).toFixed(1);
+
+            // Update icon and label
+            document.getElementById('resultIcon').textContent = isExoplanet ? '🌟' : '❌';
+            document.getElementById('resultLabel').textContent = result.label;
+            document.getElementById('resultLabel').className = 
+                isExoplanet ? 'result-label result-exoplanet' : 'result-label result-not-exoplanet';
+
+            // Update confidence bar
+            document.getElementById('confidenceFill').style.width = confidence + '%';
+            document.getElementById('confidenceText').textContent = confidence + '%';
+
+            // Update probabilities
+            document.getElementById('probNotExo').textContent = 
+                (result.probabilities.not_exoplanet * 100).toFixed(1) + '%';
+            document.getElementById('probExo').textContent = 
+                (result.probabilities.exoplanet * 100).toFixed(1) + '%';
+
+            // Handle habitability analysis
+            if (isExoplanet && result.habitability) {
+                displayHabitability(result.habitability);
+            } else {
+                document.getElementById('habitabilitySection').style.display = 'none';
+            }
+
+            // Show results
+            document.getElementById('results').style.display = 'block';
+        }
+
+        // Display habitability analysis
+        function displayHabitability(habitability) {
+            const section = document.getElementById('habitabilitySection');
+            const loading = document.getElementById('habitabilityLoading');
+            const content = document.getElementById('habitabilityContent');
+            const error = document.getElementById('habitabilityError');
+
+            section.style.display = 'block';
+            loading.style.display = 'none';
+            error.style.display = 'none';
+            content.style.display = 'none';
+
+            if (habitability.success && habitability.habitability_score !== null) {
+                // Show success content
+                content.style.display = 'block';
+                
+                const score = habitability.habitability_score;
+                document.getElementById('habitabilityScore').textContent = score.toFixed(1) + '%';
+                
+                // Update icon based on score
+                let icon = '🌱';
+                if (score > 70) icon = '🌍';
+                else if (score > 50) icon = '🌿';
+                else if (score > 30) icon = '🪨';
+                else icon = '❄️';
+                document.getElementById('habitabilityIcon').textContent = icon;
+                
+                // Update progress bar
+                document.getElementById('habitabilityBar').style.width = score + '%';
+                document.getElementById('habitabilityBarText').textContent = score.toFixed(1) + '%';
+                
+                // Update explanation
+                document.getElementById('habitabilityExplanation').textContent = habitability.explanation;
+            } else {
+                // Show error
+                error.style.display = 'block';
+                const errorMsg = habitability.error || habitability.explanation || 'Habitability analysis not available';
+                document.getElementById('habitabilityErrorText').textContent = errorMsg;
+            }
+        }
+
+        // Initialize
+        loadFeatures();
+        loadDatabaseStatus();
+
+        // ========== DATA UPLOAD FUNCTIONALITY ==========
+        
+        const uploadBox = document.getElementById('uploadBox');
+        const fileInput = document.getElementById('csvFileInput');
+        const browseBtn = document.getElementById('browseBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+
+        // Load database status
+        async function loadDatabaseStatus() {
+            try {
+                const response = await fetch('/api/database-status');
+                const data = await response.json();
+                
+                const statusIndicator = document.getElementById('dbStatusIndicator');
+                const statusText = document.getElementById('dbStatus');
+                const rowCount = document.getElementById('dbRowCount');
+                
+                if (data.connected) {
+                    statusIndicator.className = 'status-indicator status-connected';
+                    statusText.textContent = 'Connected';
+                    rowCount.textContent = data.row_count.toLocaleString();
+                } else {
+                    statusIndicator.className = 'status-indicator status-disconnected';
+                    statusText.textContent = 'Disconnected';
+                    rowCount.textContent = '-';
+                }
+            } catch (error) {
+                console.error('Error loading database status:', error);
+                document.getElementById('dbStatus').textContent = 'Error';
+            }
+        }
+
+        // Browse button click
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Upload box click
+        uploadBox.addEventListener('click', (e) => {
+            if (e.target !== browseBtn) {
+                fileInput.click();
+            }
+        });
+
+        // File input change
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                uploadFile(file);
+            }
+        });
+
+        // Drag and drop
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('dragover');
+        });
+
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('dragover');
+        });
+
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('dragover');
+            
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.csv')) {
+                uploadFile(file);
+            } else {
+                showUploadStatus('error', 'Please upload a CSV file');
+            }
+        });
+
+        // Upload file
+        async function uploadFile(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            showUploadStatus('loading', `Uploading ${file.name}...`);
+            browseBtn.disabled = true;
+
+            try {
+                const response = await fetch('/api/upload-csv', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showUploadStatus('success', 
+                        `✅ Success! Added ${result.rows_inserted} rows. Total: ${result.total_rows.toLocaleString()} rows`
+                    );
+                    loadDatabaseStatus(); // Refresh stats
+                } else {
+                    showUploadStatus('error', `❌ Error: ${result.error}`);
+                }
+            } catch (error) {
+                showUploadStatus('error', `❌ Upload failed: ${error.message}`);
+            } finally {
+                browseBtn.disabled = false;
+                fileInput.value = ''; // Reset input
+            }
+        }
+
+        // Show upload status
+        function showUploadStatus(type, message) {
+            uploadStatus.style.display = 'block';
+            uploadStatus.style.padding = '15px';
+            uploadStatus.style.borderRadius = '8px';
+            uploadStatus.style.marginTop = '20px';
+            
+            if (type === 'success') {
+                uploadStatus.style.background = 'rgba(102, 187, 106, 0.2)';
+                uploadStatus.style.border = '1px solid #66bb6a';
+                uploadStatus.style.color = '#66bb6a';
+            } else if (type === 'error') {
+                uploadStatus.style.background = 'rgba(239, 83, 80, 0.2)';
+                uploadStatus.style.border = '1px solid #ef5350';
+                uploadStatus.style.color = '#ef5350';
+            } else if (type === 'loading') {
+                uploadStatus.style.background = 'rgba(79, 195, 247, 0.2)';
+                uploadStatus.style.border = '1px solid #4fc3f7';
+                uploadStatus.style.color = '#4fc3f7';
+            }
+            
+            uploadStatus.textContent = message;
+        }
+
+        // Export dataset button
+        document.getElementById('exportDatasetBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('exportDatasetBtn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Exporting...';
+
+            try {
+                const response = await fetch('/api/export-dataset', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    showUploadStatus('success', 
+                        `✅ Exported ${result.rows_exported.toLocaleString()} rows to whole_dataset.csv`
+                    );
+                } else {
+                    showUploadStatus('error', `❌ Export failed: ${result.error}`);
+                }
+            } catch (error) {
+                showUploadStatus('error', `❌ Export failed: ${error.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '📊 Export Full Dataset';
+            }
+        });
+
+        // Download dataset button
+        document.getElementById('downloadDatasetBtn').addEventListener('click', () => {
+            window.location.href = '/api/download-dataset';
+        });
+
+        // Refresh stats button
+        document.getElementById('refreshStatsBtn').addEventListener('click', () => {
+            loadDatabaseStatus();
+            showUploadStatus('success', '✅ Stats refreshed');
+            setTimeout(() => {
+                uploadStatus.style.display = 'none';
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
