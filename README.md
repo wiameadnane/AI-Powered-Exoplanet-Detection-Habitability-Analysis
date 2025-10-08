@@ -1,4 +1,4 @@
-# LifeBeyond 🌍
+# LifeBeyond 🌍 The NASA International Space Apps Challenge (UM6P & NASA)
 
 **AI-Powered Exoplanet Detection & Habitability Analysis**
 
